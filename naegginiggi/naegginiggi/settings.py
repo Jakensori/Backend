@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'user',
     'user_record',
     'donation_point',
-    'rest_framework.authtoken',
 ]
 
 REST_FRAMEWORK = {
