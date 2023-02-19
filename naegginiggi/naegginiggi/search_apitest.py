@@ -11,10 +11,7 @@ html = response.read().decode('utf-8')
 soup = BeautifulSoup(html, 'html5lib')
 #soup = BeautifulSoup(html, 'html.parser')
 print("모금함 개수", json.loads(soup.text)['result']['totalCount'])
-
 print("모금함 정보 목록", json.loads(soup.text)['result']['rdonaBoxes'])
-
-
 
 
 
