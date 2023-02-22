@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user_record',
     'donation_point',
     'user_custom',
+    'campaign',
 ]
 
 REST_FRAMEWORK = {

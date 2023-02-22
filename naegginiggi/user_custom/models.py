@@ -7,3 +7,4 @@ class User_Custom(models.Model):
     month_budget = models.IntegerField()
     donation_temperature = models.IntegerField()
     total_donation = models.IntegerField()
+    donation_count = models.IntegerField(null=True)
