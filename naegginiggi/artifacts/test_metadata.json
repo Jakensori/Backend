@@ -1,0 +1,44 @@
+{
+	"compiler": {
+		"version": "0.8.6+commit.11564f7e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"naegginiggi/test.sol": "test"
+		},
+		"evmVersion": "berlin",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"naegginiggi/test.sol": {
+			"keccak256": "0x2d595dd331c469e6593d76f25e3903f9e3ddb8ac95831d05e7865cd6cc66823a",
+			"urls": [
+				"bzz-raw://cf3f5436b91d9afcf8fb19dfe57e6239adbd74532722a7f54bc3c3f9ff74318d",
+				"dweb:/ipfs/QmbibDwPXM9AgrS7brxMx3jMepmDhpLei3EwTPn6VxXvit"
+			]
+		}
+	},
+	"version": 1
+}
