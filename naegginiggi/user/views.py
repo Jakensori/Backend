@@ -52,13 +52,14 @@ def register_api(request):
     user = serializer.save()
     _, token = AuthToken.objects.create(user) 
     
-    username = request.data['username']
+    myuser = models.User(user=user, username=request.data['username'])
+    myuser.save() # Model의 User Entity 저장 (auth의 User와 1대 1 매핑으로 연결되어있음)
     
     return Response({
         'user_info': {'id': user.id,
             'userid': user.username,
             'email': user.email,
-            'username': username},
+            'username': myuser.username},
         
         'token': token
     })
