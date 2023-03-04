@@ -6,6 +6,8 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.auth import AuthToken, TokenAuthentication
 from .serializers import RegisterSerializer
 
+from . import models
+
 # Create your views here.
 @api_view(['POST'])
 def login_api(request):
@@ -44,15 +46,19 @@ def get_user_data(request):
 
 @api_view(['POST'])
 def register_api(request):
-    serializer = RegisterSerializer(data=request.data)
+    # auth의 User 저장
+    serializer = RegisterSerializer(data={'username': request.data['userid'], 'email': request.data['email'], 'password': request.data['password']})
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
-    _, token = AuthToken.objects.create(user)
+    _, token = AuthToken.objects.create(user) 
+    
+    username = request.data['username']
+    
     return Response({
-        'user_info': {
-            'id': user.id,
-            'username': user.username,
+        'user_info': {'id': user.id,
+            'userid': user.username,
             'email': user.email,
-        },
+            'username': username},
+        
         'token': token
     })

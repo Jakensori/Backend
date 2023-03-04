@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'naegginiggi.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = my_settings.DATEBASES
+DATABASES = my_settings.DATABASES
 
 
 # Password validation

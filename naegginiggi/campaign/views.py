@@ -1,8 +1,8 @@
 from django.shortcuts import render
-
+from .models import Campaign
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 # Create your views here.
-def index(request):
-    return render('campaign/index.html')
 
 
 def chat(request):

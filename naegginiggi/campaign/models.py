@@ -3,6 +3,7 @@ from user.models import User
 
 # Create your models here.
 class Campaign(models.Model):
+    campaign_id = models.AutoField(primary_key=True)
     rdonaBoxNo = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
     image = models.ImageField()
@@ -14,19 +15,35 @@ class Campaign(models.Model):
     donationCount = models.IntegerField()
     goalAmount = models.IntegerField()
     
+    class Meta:
+        managed = False
+        db_table = 'Campaign'
+    
 
 class Review(models.Model):
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    review_id = models.AutoField(primary_key=True)
+    campaign_id = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
     
+    class Meta:
+        managed = False
+        db_table = 'Review'
+    
 
 class User_Campaign(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    usercampaign_userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    usercampaign_campaignid = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     
+    class Meta:
+        managed = False
+        db_table = 'User_Campaign'
     
 class Message(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    usercampaign_userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    usercampaign_campaignid = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     message = models.TextField()
+    
+    class Meta:
+        managed = False
+        db_table = 'Message'
