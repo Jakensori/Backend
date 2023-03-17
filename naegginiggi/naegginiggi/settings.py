@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import my_settings
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -49,12 +50,19 @@ INSTALLED_APPS = [
 ]
 
 # Channels
-ASGI_APPLICATION = 'mysite.asgi.application'
+ASGI_APPLICATION = 'naegginiggi.routing.application'
 
 REST_FRAMEWORK = {
     'DEFALUT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
+}
+
+REST_KNOX = {
+   'TOKEN_TTL': timedelta(hours=10), #time to live (without refresh)
+   'TOKEN_LIMIT_PER_USER': None,
+   'AUTO_REFRESH': True,
+   'MIN_REFRESH_INTERVAL': 60 #number of seconds
 }
 
 MIDDLEWARE = [

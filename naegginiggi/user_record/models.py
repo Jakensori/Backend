@@ -4,7 +4,7 @@ from user.models import User
 
 class User_Record(models.Model):
     userrecord_id = models.AutoField(primary_key=True)
-    userrecord_userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     day_budget = models.IntegerField()
     today_date = models.DateTimeField()
     comsumption = models.IntegerField()
@@ -17,7 +17,7 @@ class User_Record(models.Model):
 
 class Record(models.Model):
     record_id = models.AutoField(primary_key=True)
-    record_userrecord_id = models.ForeignKey(User_Record, on_delete=models.CASCADE)
+    userrecord = models.ForeignKey(User_Record, on_delete=models.CASCADE)
     when = models.CharField(max_length=10)
     category = models.CharField(max_length=30)
     price = models.IntegerField()

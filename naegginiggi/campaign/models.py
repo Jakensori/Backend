@@ -22,7 +22,7 @@ class Campaign(models.Model):
 
 class Review(models.Model):
     review_id = models.AutoField(primary_key=True)
-    campaign_id = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
     
@@ -32,16 +32,16 @@ class Review(models.Model):
     
 
 class User_Campaign(models.Model):
-    usercampaign_userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    usercampaign_campaignid = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     
     class Meta:
         managed = False
         db_table = 'User_Campaign'
     
 class Message(models.Model):
-    usercampaign_userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    usercampaign_campaignid = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     message = models.TextField()
     
     class Meta:

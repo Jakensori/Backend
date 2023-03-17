@@ -6,6 +6,8 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.auth import AuthToken, TokenAuthentication
 from .serializers import RegisterSerializer
 
+from django.contrib.auth.models import User as uu
+
 from . import models
 
 # Create your views here.
@@ -28,21 +30,23 @@ def login_api(request):
 
 @api_view(['GET'])
 def get_user_data(request):
-    token = request.META.get('HTTP_AUTHORIZATION', False)
-    if token:
-        token = str(token).split()[1].encode("utf-8")
-        knoxAuth = TokenAuthentication()
-        user, auth_token = knoxAuth.authenticate_credentials(token)
-        request.user = user
-        return Response({
-            'user_info': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'password': user.password,
-            },
-        })
-    return Response({'error': 'not authenticated'}, status=400)
+    # token = request.META.get('HTTP_AUTHORIZATION', False)
+    # if token:
+    #     token = str(token).split()[1].encode("utf-8")
+    #     knoxAuth = TokenAuthentication()
+    #     user, auth_token = knoxAuth.authenticate_credentials(token)
+    #     request.user = user
+    #     return Response({
+    #         'user_info': {
+    #             'id': user.id,
+    #             'username': user.username,
+    #             'email': user.email,
+    #             'password': user.password,
+    #         },
+    #     })
+    # return Response({'error': 'not authenticated'}, status=400)
+    realuser=uu.objects.all()
+    return Response(realuser, status=200)
 
 @api_view(['POST'])
 def register_api(request):
@@ -50,7 +54,6 @@ def register_api(request):
     serializer = RegisterSerializer(data={'username': request.data['userid'], 'email': request.data['email'], 'password': request.data['password']})
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
-    _, token = AuthToken.objects.create(user) 
     
     myuser = models.User(user=user, username=request.data['username'])
     myuser.save() # Model의 User Entity 저장 (auth의 User와 1대 1 매핑으로 연결되어있음)
@@ -59,7 +62,5 @@ def register_api(request):
         'user_info': {'id': user.id,
             'userid': user.username,
             'email': user.email,
-            'username': myuser.username},
-        
-        'token': token
+            'username': myuser.username}
     })
