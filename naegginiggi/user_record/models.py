@@ -4,20 +4,20 @@ from user.models import User
 
 class User_Record(models.Model):
     userrecord_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     day_budget = models.IntegerField()
     today_date = models.DateTimeField()
     comsumption = models.IntegerField()
     donation = models.IntegerField()
     
     class Meta:
-        managed = False
+        managed = True
         db_table = 'User_Record'
     
 
 class Record(models.Model):
     record_id = models.AutoField(primary_key=True)
-    userrecord = models.ForeignKey(User_Record, on_delete=models.CASCADE)
+    userrecord = models.ForeignKey(User_Record, on_delete=models.CASCADE, null=True)
     when = models.CharField(max_length=10)
     category = models.CharField(max_length=30)
     price = models.IntegerField()
@@ -25,5 +25,5 @@ class Record(models.Model):
     settlement = models.BooleanField()
     
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Record'

@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('donation/', include('donation_point.urls')),
     path('user/', include('user.urls')),
-    path('campaign/', include('campaign.urls')),
+    path('chat/', include('campaign.urls')),
     path('custom/', include('user_custom.urls')),
+    path('record/', include('user_record.urls')),
 ]

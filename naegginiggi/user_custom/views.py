@@ -2,10 +2,10 @@ from .models import User_Custom
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from user.models import User
-from django.contrib.auth.models import User as uu
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from knox.auth import AuthToken, TokenAuthentication
+from django.db import connection
 
 # Create your views here.
 @api_view(['POST'])
@@ -16,13 +16,11 @@ def monthBudget(request):
         knoxAuth = TokenAuthentication()
         user, auth_token = knoxAuth.authenticate_credentials(token)
         request.user = user
-    authuser = uu.objects.get(username=user)
-    print(authuser)
-    user=User.objects.get(user=authuser)
-    print(user.username)
+
+    user = get_object_or_404(User,user=user)  
     user_custom = User_Custom.objects.create(
         user=user,
         month_budget = request.data['month_budget']
     ) 
     user_custom.save()
-    return Response({'usercustom': user_custom.month_budget}, status=status.HTTP_200_OK)
+    return Response({'data': user_custom.month_budget}, status=status.HTTP_200_OK)
