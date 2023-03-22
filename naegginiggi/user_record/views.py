@@ -39,11 +39,18 @@ def todaysettlement(request):
         user, auth_token = knoxAuth.authenticate_credentials(token)
         request.user = user
     user = get_object_or_404(User,user=user) 
+    user_detail = User_Custom.objects.get(user=user)
     user_record=User_Record.objects.get(user=user, today_date=datetime.today().date())
     if request.method == 'POST':  # 하루 기부금 저장
         today_donation = request.data['today_donation']
         user_record.donation += int(today_donation)
+        
+        user_detail.donation_count += 1
+        user_detail.donation_temperature += 10
+        user_detail.total_donation += int(today_donation)
+        
         user_record.save()
+        user_detail.save()
         return Response({"today_donation": user_record.donation}, status=status.HTTP_200_OK)
         
     else:  # 하루정산 하기 전 기부가능 금액 고지
