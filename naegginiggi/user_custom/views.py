@@ -4,8 +4,7 @@ from rest_framework.response import Response
 from user.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from knox.auth import AuthToken, TokenAuthentication
-from django.db import connection
+from knox.auth import TokenAuthentication
 
 # Create your views here.
 @api_view(['POST'])

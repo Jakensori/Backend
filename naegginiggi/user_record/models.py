@@ -6,7 +6,7 @@ class User_Record(models.Model):
     userrecord_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     day_budget = models.IntegerField()
-    today_date = models.DateTimeField()
+    today_date = models.DateField()
     comsumption = models.IntegerField()
     donation = models.IntegerField()
     
@@ -21,8 +21,8 @@ class Record(models.Model):
     when = models.CharField(max_length=10)
     category = models.CharField(max_length=30)
     price = models.IntegerField()
-    memo = models.TextField()
-    settlement = models.BooleanField()
+    memo = models.TextField(null=True)
+    settlement = models.BooleanField(default=False)
     
     class Meta:
         managed = True
