@@ -11,4 +11,10 @@ class RecordSerializer(serializers.ModelSerializer):
 class User_RecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_Record
-        exclude = ('userrecord_id', 'today_date', 'donation', 'user',)
+        exclude = ('userrecord_id', 'today_date', 'donation', 'user','differ',)
+        
+        
+class AccountBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User_Record
+        exclude = ('userrecord_id', 'day_budget', 'comsumption', 'user',)

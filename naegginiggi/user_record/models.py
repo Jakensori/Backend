@@ -9,6 +9,7 @@ class User_Record(models.Model):
     today_date = models.DateField()
     comsumption = models.IntegerField()
     donation = models.IntegerField()
+    differ = models.IntegerField(default=0)
     
     class Meta:
         managed = True
