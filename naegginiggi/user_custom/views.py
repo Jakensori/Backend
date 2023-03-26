@@ -5,7 +5,10 @@ from user.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from knox.auth import TokenAuthentication
+from campaign.models import Campaign
+from campaign.serializers import CampaignSerializer
 
+from django.core.paginator import Paginator
 # Create your views here.
 @api_view(['POST'])
 def monthBudget(request):
@@ -23,3 +26,36 @@ def monthBudget(request):
     ) 
     user_custom.save()
     return Response({'data': user_custom.month_budget}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def donation_box(request):
+    token = request.META.get('HTTP_AUTHORIZATION', False)
+    if token:
+        token = str(token).split()[1].encode("utf-8")
+        knoxAuth = TokenAuthentication()
+        user, auth_token = knoxAuth.authenticate_credentials(token)
+        request.user = user
+
+    user = get_object_or_404(User,user=user)
+    user_detail = User_Custom.objects.get(user=user)
+    campaign = Campaign.objects.all()
+    paginator = Paginator(campaign, 4).page(1).object_list
+    campaignserializer = CampaignSerializer(paginator, many=True).data
+    return Response({"total_donation":user_detail.total_donation, "donation_point":user_detail.donation_count, 'page_obj':campaignserializer}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def mypageUser(request):
+    token = request.META.get('HTTP_AUTHORIZATION', False)
+    if token:
+        token = str(token).split()[1].encode("utf-8")
+        knoxAuth = TokenAuthentication()
+        user, auth_token = knoxAuth.authenticate_credentials(token)
+        request.user = user
+
+    myuser = get_object_or_404(User,user=user)
+    user_donationtem = User_Custom.objects.get(user=myuser).donation_temperature
+    username = myuser.username
+
+    return Response({"username": username, "userid": user.username, "email": user.email, "donation_temperature": user_donationtem}, status=status.HTTP_200_OK)

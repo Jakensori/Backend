@@ -5,6 +5,8 @@ from rest_framework.response import Response
 import json
 from rest_framework import status
 from datetime import datetime
+from .serializers import CampaignSerializer
+
 # Create your views here.
 
 ## 비동기 실시간 챗 구현
@@ -27,7 +29,7 @@ def updateCampaign(request):
     
     for i in range(len(data)):
         temp = data[i]
-        campaign = Campaign.objects.create(
+        Campaign.objects.create(
             rdonaBoxNo = temp['rdonaBoxNo'],
             title = temp['title'],
             image = temp['defaultImage'],
@@ -40,3 +42,18 @@ def updateCampaign(request):
             goalAmount = temp['goalAmount']
         )
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def loadCampaign(request):
+    campaign=Campaign.objects.all()
+    campaignserializer = CampaignSerializer(campaign, many=True).data
+    return Response(campaignserializer, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def campaignOne(request,campaign_id):
+    campaign=Campaign.objects.get(campaign_id=campaign_id)
+    campaignserializer = CampaignSerializer(campaign).data    
+    return Response(campaignserializer, status=status.HTTP_200_OK)
+

@@ -108,6 +108,7 @@ def month_accountbook(request):
     
     user = get_object_or_404(User,user=user)
     user_record = User_Record.objects.filter(user=user)
+    
     for i in user_record:
         if i.today_date.year == year and i.today_date.month == month:
             pass
@@ -128,8 +129,8 @@ def month_accountbook(request):
    
 def analysis(request, user_id):
     user = get_object_or_404(User,id=user_id)
-    year = int(request.GET['year'])
-    month = int(request.GET['month']) # 입력 값이 0일때는 '전체'로 조회하기
+    year = int(request.data['year'])
+    month = int(request.data['month']) # 입력 값이 0일때는 '전체'로 조회하기
     userrecord_temp = []
     user_record=User_Record.objects.filter(user=user)
     if month == 0:
