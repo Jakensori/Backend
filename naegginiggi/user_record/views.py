@@ -6,7 +6,7 @@ from user.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from knox.auth import TokenAuthentication
-from .serializers import RecordSerializer, User_RecordSerializer, AccountBookSerializer
+from .serializers import RecordSerializer, AccountBookSerializer
 
 # 날짜 계산
 from datetime import datetime
@@ -20,8 +20,9 @@ def todayrecord(request, user_id):
     user_record=User_Record.objects.get(user=user, today_date="2023-03-23")
     records=Record.objects.filter(userrecord=user_record)
     records_serializer = RecordSerializer(records, many=True).data
-    user_record_serializer = User_RecordSerializer(user_record).data
-    return Response({"끼니 기록들": records_serializer, "하루 기록정보": user_record_serializer}, status=status.HTTP_200_OK)
+    day_budget = user_record.day_budget
+    comsumption = user_record.comsumption
+    return Response({"records": records_serializer, "day_budget": day_budget,"comsumption":comsumption}, status=status.HTTP_200_OK)
     
     
 @api_view(['POST', 'GET'])    
@@ -95,18 +96,18 @@ def addrecord(request):  # 하나의 record 테이블 생성
 
 @api_view(['GET'])
 def month_accountbook(request):
-    token = request.META.get('HTTP_AUTHORIZATION', False)
-    if token:
-        token = str(token).split()[1].encode("utf-8")
-        knoxAuth = TokenAuthentication()
-        user, auth_token = knoxAuth.authenticate_credentials(token)
-        request.user = user
+    # token = request.META.get('HTTP_AUTHORIZATION', False)
+    # if token:
+    #     token = str(token).split()[1].encode("utf-8")
+    #     knoxAuth = TokenAuthentication()
+    #     user, auth_token = knoxAuth.authenticate_credentials(token)
+    #     request.user = user
         
     # 프론트랑 연결할 때는 request.GET으로 고치기
-    year = int(request.data['year'])
-    month = int(request.data['month'])
-    
-    user = get_object_or_404(User,user=user)
+    year = int(request.GET['year'])
+    month = int(request.GET['month'])
+    # 임의 유저
+    user = get_object_or_404(User,id=2)
     user_record = User_Record.objects.filter(user=user)
     
     for i in user_record:
@@ -129,8 +130,8 @@ def month_accountbook(request):
    
 def analysis(request, user_id):
     user = get_object_or_404(User,id=user_id)
-    year = int(request.data['year'])
-    month = int(request.data['month']) # 입력 값이 0일때는 '전체'로 조회하기
+    year = int(request.GET['year'])
+    month = int(request.GET['month']) # 입력 값이 0일때는 '전체'로 조회하기
     userrecord_temp = []
     user_record=User_Record.objects.filter(user=user)
     if month == 0:

@@ -59,3 +59,5 @@ def mypageUser(request):
     username = myuser.username
 
     return Response({"username": username, "userid": user.username, "email": user.email, "donation_temperature": user_donationtem}, status=status.HTTP_200_OK)
+
+    
