@@ -4,8 +4,8 @@ from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
 
-from . import models
-
+from . import models    
+    
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

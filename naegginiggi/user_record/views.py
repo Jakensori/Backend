@@ -45,7 +45,7 @@ def todaysettlement(request, user_id):
         
         user_record.save()
         user_detail.save()
-        return Response({"today_donation": user_record.donation}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
         
     else:  # 하루정산 하기 전 기부가능 금액 고지
         record=Record.objects.filter(userrecord=user_record)
@@ -58,14 +58,16 @@ def todaysettlement(request, user_id):
         
 @api_view(['POST'])     
 def addrecord(request):  # 하나의 record 테이블 생성
-    token = request.META.get('HTTP_AUTHORIZATION', False)
-    if token:
-        token = str(token).split()[1].encode("utf-8")
-        knoxAuth = TokenAuthentication()
-        user, auth_token = knoxAuth.authenticate_credentials(token)
-        request.user = user
+    # token = request.META.get('HTTP_AUTHORIZATION', False)
+    # if token:
+    #     token = str(token).split()[1].encode("utf-8")
+    #     knoxAuth = TokenAuthentication()
+    #     user, auth_token = knoxAuth.authenticate_credentials(token)
+    #     request.user = user
         
-    user = get_object_or_404(User,user=user) 
+    # user = get_object_or_404(User,user=user) 
+    # 임의 유저 설정
+    user = get_object_or_404(User,id=2)
     user_detail = User_Custom.objects.get(user=user)
     today = datetime.today()
     next_month = datetime(today.year, today.month, 1) + relativedelta(months=1)

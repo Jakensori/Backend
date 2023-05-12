@@ -56,7 +56,10 @@ def get_delete_user_data(request):
 @api_view(['POST'])
 def register_api(request):
     # auth의 User 저장
-    serializer = RegisterSerializer(data={'username': request.data['userid'], 'email': request.data['email'], 'password': request.data['password']})
+    serializer = RegisterSerializer(data={
+        'username': request.data['userid'],
+        'email': request.data['email'],
+        'password': request.data['password']})
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
     
