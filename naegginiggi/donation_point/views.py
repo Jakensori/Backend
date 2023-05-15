@@ -7,9 +7,14 @@ from rest_framework import status
 from django.utils import timezone
 from knox.auth import TokenAuthentication
 
+import my_settings
+
 from user_custom.models import User_Custom
 from campaign.models import User_Campaign, Campaign
-# Create your views here.
+
+authorization_key = my_settings.LOYALTY_POINT_KEY
+loyaltyprogram_id = my_settings.LOYALTY_PROGRAM_ID
+
 def define_user(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
     token = str(token).split()[1].encode("utf-8")
@@ -104,7 +109,7 @@ def accumulatePointByUserId(request):
     payload = {
         "orderIdentifier": str(user.username)+"USER_add "+str(user_custom.donation_count+1)+"to Campaign "+str(campaign_id),
         "userIdentifier": str(user.password),
-        "loyaltyProgramId": "1564707676167177217",
+        "loyaltyProgramId": str(loyaltyprogram_id),
         "amount": str(point_amount),
         "description": description,
     }
@@ -112,7 +117,7 @@ def accumulatePointByUserId(request):
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
+        "Authorization": "Bearer " + authorization_key
     }
     response = requests.post(url, json=payload, headers=headers)
     return Response(response, status=status.HTTP_200_OK)
@@ -132,7 +137,7 @@ def redeemPointByUserId(request):
     payload = {
         "orderIdentifier": str(user.username)+"USER_redeem "+str(user_custom.donation_count+1)+"to Campaign "+str(campaign_id),
         "userIdentifier": str(user.password),
-        "loyaltyProgramId": "1564707676167177217",
+        "loyaltyProgramId": str(loyaltyprogram_id),
         "amount": str(point_amount),
         "description": str(timezone.now()) + " " + str(user.username)+" " + str(point_amount) + " 포인트 차감"
     }
@@ -140,7 +145,7 @@ def redeemPointByUserId(request):
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
+        "Authorization": "Bearer " + authorization_key
     }
 
     response = requests.post(url, json=payload, headers=headers)
@@ -154,7 +159,7 @@ def getUserBalance(request):
         str(user.password)+"/balances/MEAL"
     headers = {
         "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
+        "Authorization": "Bearer " + authorization_key
     }
     response = requests.get(url, headers=headers)
     return Response(response, status=status.HTTP_200_OK)
@@ -164,10 +169,10 @@ def getUserBalance(request):
 def listPointHistories(request):
     user = define_user(request)
     url = "https://api.luniverse.io/svc/v2/mercury/point/histories?userIdentifier=" + \
-        str(user.password)+"&loyaltyProgramId=1564707676167177217&rpp=50&page=1"
+        str(user.password)+"&loyaltyProgramId="+str(loyaltyprogram_id)+"&rpp=50&page=1"
     headers = {
         "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
+        "Authorization": "Bearer " + authorization_key
     }
     response = requests.get(url, headers=headers)
     return Response(response, status=status.HTTP_200_OK)
