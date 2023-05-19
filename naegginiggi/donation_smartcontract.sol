@@ -4,7 +4,6 @@ pragma solidity >=0.6.0 <0.9.0;
 contract NaeggiDonation {
     address payable public hlogName;
     uint public donationAmount;
-    uint256 public current;
 
     event Finished();
     event Donation(uint val);
@@ -12,7 +11,6 @@ contract NaeggiDonation {
     constructor(address payable _hlogName, uint _donationAmount) payable {
         hlogName = _hlogName;
         donationAmount = _donationAmount;
-        current = 0;
     }
 
     modifier onlyDonator() {
@@ -27,14 +25,15 @@ contract NaeggiDonation {
 
     function abort()
         public
+        onlyFoundation
     {
-        require(address(this).balance <= donationAmount, "Donation amount is not reached.");
+        require(address(this).balance >= donationAmount, "Donation amount is not reached.");
         emit Finished();
-        payable(hlogName).transfer(address(this).balance);
+        payable (address(msg.sender)).transfer(address(this).balance);
     }
     
     function check() public view returns (uint256){
-        return current;
+        return address(this).balance;
     }
 
     function donate()
@@ -43,11 +42,11 @@ contract NaeggiDonation {
         payable 
     {
         emit Donation(msg.value);
-        current = current + msg.value;
-        payable(msg.sender).transfer(msg.value);
     }
 
-    receive() external payable {
-        require(msg.sender == tx.origin, "Donation amount does not match.");
+    
+    // 계약으로 직접 이더를 전송
+    function transferEtherToContract() external payable {
     }
+
 }
