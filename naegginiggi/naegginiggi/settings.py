@@ -55,7 +55,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('127.0.0.1', 6379)], # 6379는 redis 서버 포트
         },
     },
 }
@@ -67,10 +67,10 @@ REST_FRAMEWORK = {
 }
 
 REST_KNOX = {
-   'TOKEN_TTL': timedelta(hours=10), #time to live (without refresh)
+   'TOKEN_TTL': None,   #timedelta(hours=10), #time to live (without refresh)
    'TOKEN_LIMIT_PER_USER': None,
-   'AUTO_REFRESH': True,
-   'MIN_REFRESH_INTERVAL': 60 #number of seconds
+   'AUTO_REFRESH': True,  #This defines if the token expiry time is extended by TOKEN_TTL each time the token is used.
+   #'MIN_REFRESH_INTERVAL': 60 #number of seconds
 }
 
 MIDDLEWARE = [
@@ -140,11 +140,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
