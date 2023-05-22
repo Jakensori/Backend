@@ -48,5 +48,4 @@ contract NaeggiDonation {
     // 계약으로 직접 이더를 전송
     function transferEtherToContract() external payable {
     }
-
 }

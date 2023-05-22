@@ -26,22 +26,12 @@ secret = my_settings.Loyalty_Point_Secret
 TOSSPAY_clientkey = 'test_ck_jkYG57Eba3GqKKZbqX5rpWDOxmA1'
 TOSSPAY_Secretkey = 'test_sk_lpP2YxJ4K87xYYAAKR03RGZwXLOb'
 
-
 def define_user(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
     token = str(token).split()[1].encode("utf-8")
     knoxAuth = TokenAuthentication()
     user, auth_token = knoxAuth.authenticate_credentials(token)
     return user
-
-
-def define_user(request):
-    token = request.META.get('HTTP_AUTHORIZATION', False)
-    token = str(token).split()[1].encode("utf-8")
-    knoxAuth = TokenAuthentication()
-    user, auth_token = knoxAuth.authenticate_credentials(token)
-    return user
-
 
 # WUJtQT09와 같은 형태로 랜덤 코드 생성 함수
 def generate_random_slug_code(length=15):  # length는 1-32사이에 존재해야 함.
