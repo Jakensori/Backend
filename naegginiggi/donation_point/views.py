@@ -7,9 +7,26 @@ from rest_framework import status
 from django.utils import timezone
 from knox.auth import TokenAuthentication
 
+import my_settings
+
+from user.models import User
 from user_custom.models import User_Custom
 from campaign.models import User_Campaign, Campaign
+
+from donation_point.models import Donation_Point
+from .serializers import DonationPointSerializer
+import uuid
+import base64
+import codecs
+
 # Create your views here.
+apikey = my_settings.API_key_Purpose
+accesskey = my_settings.Access_Key
+secret = my_settings.Loyalty_Point_Secret
+TOSSPAY_clientkey = 'test_ck_jkYG57Eba3GqKKZbqX5rpWDOxmA1'
+TOSSPAY_Secretkey = 'test_sk_lpP2YxJ4K87xYYAAKR03RGZwXLOb'
+
+
 def define_user(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
     token = str(token).split()[1].encode("utf-8")
@@ -18,156 +35,172 @@ def define_user(request):
     return user
 
 
-def approve(request):
-    render('approve.html')
-    
-    
-# 유저, 기부금액, 캠페인아이디 필요
-@api_view(['POST'])
-def index(request):
-    user = define_user(request)
-    campaign = get_object_or_404(Campaign, campaign_id=request.data['campaign_id'])
-    donation = request.data['donation']
-    URL = 'https://kapi.kakao.com/v1/payment/ready'
-    headers = {
-        "Authorization": "KakaoAK " + "d67108a72dca85785839d343f6075928",   # 변경불가
-        "Content-type": "application/x-www-form-urlencoded;charset=utf-8",  # 변경불가
-    }
-    params = {
-        "cid": "TC0ONETIME",    # 테스트용 코드
-        "partner_order_id": str(campaign.campaign_id),     # 주문번호
-        "partner_user_id": str(user.username),    # 유저 아이디
-        "item_name": str(campaign.title),        # 구매 물품 이름
-        "quantity": "1",                # 구매 물품 수량
-        "total_amount": str(donation),        # 구매 물품 가격
-        "tax_free_amount": "0",         # 구매 물품 비과세
-        "approval_url": "http://127.0.0.1:8000/donation/approve/",
-        "cancel_url": "http://127.0.0.1:8000/donation/cancel/",
-        "fail_url": "http://127.0.0.1:8000/donation/fail/",
-    }
-
-    res = requests.post(URL, headers=headers, params=params)
-    # 결제 승인시 사용할 tid를 세션에 저장
-    # next_url = res.json()['next_redirect_pc_url']   # 결제 페이지로 넘어갈 url을 저장
-    
-    return Response(res,status=status.HTTP_200_OK)
+def define_user(request):
+    token = request.META.get('HTTP_AUTHORIZATION', False)
+    token = str(token).split()[1].encode("utf-8")
+    knoxAuth = TokenAuthentication()
+    user, auth_token = knoxAuth.authenticate_credentials(token)
+    return user
 
 
-@api_view(['POST'])
-def approval(request):
-    user = define_user(request)
-    campaign = get_object_or_404(Campaign, id=request.data['campaign_id'])
-    URL = 'https://kapi.kakao.com/v1/payment/approve'
-    headers = {
-        "Authorization": "KakaoAK " + "d67108a72dca85785839d343f6075928",
-        "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
-    }
-    params = {
-        "cid": "TC0ONETIME",    # 테스트용 코드
-        "tid": request.data['tid'],  # 결제 요청시 세션에 저장한 tid
-        "partner_order_id": str(campaign.campaign_id),     # 주문번호
-        "partner_user_id": str(user.username),    # 유저 아이디
-        "pg_token": request.GET.get("pg_token"),     # 쿼리 스트링으로 받은 pg토큰
-    }
+# WUJtQT09와 같은 형태로 랜덤 코드 생성 함수
+def generate_random_slug_code(length=15):  # length는 1-32사이에 존재해야 함.
+    return base64.urlsafe_b64encode(       # url에서도 랜덤 코드를 사용가능하게 하기 위한 함수
+        codecs.encode(uuid.uuid4().bytes, 'base64').rstrip() # base64로 인코딩
+    ).decode()[:length] # 바이트스트링 타입을 문자열로 활용하기 위한 코드
 
-    res = requests.post(URL, headers=headers, params=params)
-    amount = res.json()['amount']['total']
+
+def fail(request):
+    return render('fail.html')
+
+@api_view(['GET'])
+def payments_request(request):
+    payment_category = 0  # 0이면 카드, 1이면 가상계좌
+    url = 'https://api.tosspayments.com/v1/payments'
+    code = generate_random_slug_code()
+    data = {"method" : "카드",
+            "amount" : 3000,
+            "orderId" : code,
+            "orderName": "캠페인 3",
+            "failUrl": "http://52.78.205.224:8000/donation/fail/",                          "successUrl": "http://52.78.205.224:8000/donation/approve/","customerName": "testuser"}
+    headers = {'Authorization': 'Basic dGVzdF9za19scFAyWXhKNEs4N3hZWUFBS1IwM1JHWndYTE9iOg==', "Content-Type": "application/json"}
+    res = requests.post(url, json=data, headers=headers)
+    return Response(res)
+
+@api_view(['GET'])
+def payments_approve(request):
+    url = 'https://api.tosspayments.com/v1/payments/confirm'
+    data = {"orderId": request.GET['orderId'],
+            "paymentKey": request.GET['paymentKey'],
+            "amount": int(request.GET['amount'])}
+    #authorization = TOSSPAY_Secretkey+':'
+    #authorization = base64.b64encode(authorization.encode('ascii')).decode('ascii')
+    #print(authorization)
+    headers = {'Authorization': 'Basic dGVzdF9za19scFAyWXhKNEs4N3hZWUFBS1IwM1JHWndYTE9iOg==', "Content-Type": "application/json"}
+    res = requests.post(url, json=data, headers=headers)
     res = res.json()
-    context = {
-        'res': res,
-        'amount': amount,
-    }
-    return Response(context, status=status.HTTP_200_OK)
-
-
-# 카카오 페이 결재 완료된 후에 캠페인 아이디랑 결제한 포인트 넘겨주기 !!
-
-@api_view(['POST'])
-def accumulatePointByUserId(request):
-    user = define_user(request)
-    url = "https://api.luniverse.io/svc/v2/mercury/point/save"
-    point_amount = request.data['point']
-    campaign_id = request.data['campaign_id']
-    campaign = get_object_or_404(User_Campaign, id=campaign_id)
-    user_custom = get_object_or_404(User_Custom, user=user)
-    description = str(timezone.now()) + " " + \
-        str(user.username)+" " + str(point_amount) + " 포인트 충전"
+    # 임의 유저로 테스트
+    user=get_object_or_404(User,id=1)
+    campaign=Campaign.objects.get(campaign_id=3)
     if User_Campaign.objects.filter(user=user, campaign=campaign).exists():
-        User_Campaign.objects.get(
-            user=user, campaign=campaign).donation_amount += point_amount
+        usercampaign=User_Campaign.objects.filter(user=user, campaign=campaign)
     else:
-        User_Campaign.objects.create(
-            user=user,
-            campaign=campaign,
-            donation_amount=point_amount
+        usercampaign=User_Campaign.objects.create(
+                user=user,
+                campaign=campaign
         )
-    payload = {
-        "orderIdentifier": str(user.username)+"USER_add "+str(user_custom.donation_count+1)+"to Campaign "+str(campaign_id),
-        "userIdentifier": str(user.password),
-        "loyaltyProgramId": "1564707676167177217",
-        "amount": str(point_amount),
-        "description": description,
-    }
+    donation_total = res['card']['amount']
+    usercampaign.donation_amount += donation_total
+    user_detail=User_Custom.objects.get(user=user)
+    user_detail.donation_count += 1
+    user_detail.total_donation += donation_total
+    user_detail.donation_temperature += 20
+    Donation_Point.objects.create(
+        user=user,
+        paymentkey=res["paymentKey"],
+        approvedAt=res["approvedAt"],
+        method=res["method"],
+        amount=res["totalAmount"],
+        orderId=res["orderId"]
+    )
+    accumulatePointByUserId(request,user,user_detail)
+    return Response(res, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+def get_account_info(request):
+    paymentKey = request.data['paymentkey']
+    url = 'https://api.tosspayments.com/v1/payments/'+paymentKey
+    headers = {'Authorization': 'Basic dGVzdF9za19scFAyWXhKNEs4N3hZWUFBS1IwM1JHWndYTE9iOg=='}
+    res = requests.get(url,headers=headers)
+    return Response(res.json(), status=status.HTTP_200_OK)
+
+
+#포인트 선결제 로직으로 생각하고 짠 함수임.
+#포인트 환불을 의미.
+@api_view(['POST'])
+def cancel_payments(request):
+    paymentKey=request.data['paymentKey']
+    url = 'https://api.tosspayments.com/v1/payments/'+paymentKey+'/cancel'
+    headers = {'Authorization': 'Basic dGVzdF9za19scFAyWXhKNEs4N3hZWUFBS1IwM1JHWndYTE9iOg==', "Content-Type": "application/json"}
+    res = requests.post(url, json={'cancelReason':request.data['reason']}, headers=headers)
+    return Response(res.json())
+
+
+def get_authentication():
+    tokenurl = "https://api.luniverse.io/svc/v2/auth-tokens"
+    loyalty_program_id_url = "https://api.luniverse.io/svc/v2/mercury/loyalty-programs"
+    payload = {
+        "expiresIn":604800,
+        "accessKey": accesskey,
+        "secretKey" :secret
+    }
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
     }
-    response = requests.post(url, json=payload, headers=headers)
-    return Response(response, status=status.HTTP_200_OK)
+    response = requests.post(tokenurl, json=payload, headers=headers)
+    token = response.json()["data"]["authToken"]["token"]
+    token_headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": "Bearer " + token
+    }
+    response = requests.get(loyalty_program_id_url, headers=token_headers)
+    loyalty_program_id = response.json()["data"]["loyaltyPrograms"]["items"][0]["loyaltyProgramId"]
+    return loyalty_program_id, token_headers
+
+
+def accumulatePointByUserId(request,user,user_custom):
+    loyalty_program_id, token_headers = get_authentication()
+    earn_point_url = "https://api.luniverse.io/svc/v2/mercury/point/save"
+    description = str(timezone.now()) + " " +str(user.username) + " "+  "20 포인트 충전"
+    payload = {
+        "orderIdentifier": generate_random_slug_code(),
+        "userIdentifier": str(user.password),
+        "loyaltyProgramId": loyalty_program_id,
+        "amount": "20",
+        "description": description,
+    }
+    response = requests.post(earn_point_url, json=payload, headers=token_headers)
+    return Response(response.json(), status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def redeemPointByUserId(request):
     user = define_user(request)
+    myuser = get_object_or_404(User, user_id=user.id)
     url = "https://api.luniverse.io/svc/v2/mercury/point/spend"
-    point_amount = request.data['point']
-    user_custom = get_object_or_404(User_Custom, user=user)
-    campaign_id = request.data['campaign_id']
-    campaign = get_object_or_404(User_Campaign, id=campaign_id)
-    User_Campaign.objects.get(
-        user=user, campaign=campaign).donation_amount -= point_amount
+    loyalty_program_id, token_headers = get_authentication()
+    using_point = request.data['used_point']
+    user_custom = get_object_or_404(User_Custom, user=myuser)
+    user_custom.donation_temperature -= using_point
 
     payload = {
-        "orderIdentifier": str(user.username)+"USER_redeem "+str(user_custom.donation_count+1)+"to Campaign "+str(campaign_id),
+        "orderIdentifier": generate_random_slug_code(),
         "userIdentifier": str(user.password),
-        "loyaltyProgramId": "1564707676167177217",
-        "amount": str(point_amount),
-        "description": str(timezone.now()) + " " + str(user.username)+" " + str(point_amount) + " 포인트 차감"
+        "loyaltyProgramId": loyalty_program_id,
+        "amount": str(using_point),
+        "description": str(timezone.now()) + " " + str(myuser.username)+" "+str(using_point) + " 포인트 차감"
     }
-
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
-    }
-
-    response = requests.post(url, json=payload, headers=headers)
-    return Response(response, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def getUserBalance(request):
-    user = define_user(request)
-    url = "https://api.luniverse.io/svc/v2/mercury/point-accounts/" + \
-        str(user.password)+"/balances/MEAL"
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
-    }
-    response = requests.get(url, headers=headers)
-    return Response(response, status=status.HTTP_200_OK)
+    response = requests.post(url, json=payload, headers=token_headers)
+    return Response(response.json(), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def listPointHistories(request):
     user = define_user(request)
+    loyalty_program_id, token_headers = get_authentication()
     url = "https://api.luniverse.io/svc/v2/mercury/point/histories?userIdentifier=" + \
-        str(user.password)+"&loyaltyProgramId=1564707676167177217&rpp=50&page=1"
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ2ZXIiOiJ2MSIsInRrbiI6ImI4ZjgzY2NkZGIyZTU5MjkiLCJ0cGUiOiJJQU0iLCJzbHQiOiJlYzQyZjkwMTJjMjFjYTA3IiwiaWF0IjoxNjc2NTI2MTQxLCJleHAiOjE2NzcxMzA5NDEsImlzcyI6Imx1bnZzOmJhYXM6YXV0aDpzZXJ2aWNlIn0.8b4rysCN1x5x88YjAWhdnivVAJc6o7ReKuUUCzEyEGX9pD0ASOewdvGPHwyHHVIjAf-x-U15pkyk67N09JNisQ"
-    }
-    response = requests.get(url, headers=headers)
-    return Response(response, status=status.HTTP_200_OK)
+        str(user.password)+"&loyaltyProgramId="+str(loyalty_program_id)+"&rpp=50&page=1"
+    response = requests.get(url, headers=token_headers)
+    return Response(response.json(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def donation_receipt(request):
+    # 임의 유저
+    user = get_object_or_404(User,id=1)
+    donation_user = Donation_Point.objects.filter(user=user)
+    donation_list = DonationPointSerializer(donation_user, many=True).data
+    return Response(donation_list, status=status.HTTP_200_OK)

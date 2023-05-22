@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 
 
 # 임의의 유저 가정
-user = get_object_or_404(User, id=1)
+# user = get_object_or_404(User, id=1)
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -54,7 +54,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
     @database_sync_to_async
     def create_message(self, message):
+        user = get_object_or_404(User,id=1)
         Message.objects.create(
-            user=user, campaign=get_object_or_404(Campaign, campaign_id=int(self.room_name)), message=message
+                user=user, campaign=get_object_or_404(Campaign, campaign_id=int(self.room_name)), message=message
         )
         return True

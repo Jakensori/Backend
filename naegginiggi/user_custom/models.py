@@ -8,6 +8,7 @@ class User_Custom(models.Model):
     donation_temperature = models.IntegerField(default=0)
     total_donation = models.IntegerField(default=0)
     donation_count = models.IntegerField(default=0)
+    savings = models.IntegerField(default=0)
     authority = models.BooleanField(default=False) ## 초기 값 : 0 == 기부자 // 1 == 재단
     
     class Meta:

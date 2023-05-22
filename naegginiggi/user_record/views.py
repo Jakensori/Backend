@@ -9,7 +9,8 @@ from knox.auth import TokenAuthentication
 from .serializers import RecordSerializer, AccountBookSerializer
 
 # 날짜 계산
-from datetime import datetime
+from datetime import datetime, date
+from django.utils import timezone
 from dateutil.relativedelta import *
 
 # Create your views here.
@@ -17,32 +18,41 @@ from dateutil.relativedelta import *
 def todayrecord(request, user_id): 
     user = get_object_or_404(User,id=user_id) 
     # 수정
-    user_record=User_Record.objects.get(user=user, today_date="2023-03-23")
-    records=Record.objects.filter(userrecord=user_record)
-    records_serializer = RecordSerializer(records, many=True).data
-    day_budget = user_record.day_budget
-    comsumption = user_record.comsumption
-    return Response({"records": records_serializer, "day_budget": day_budget,"comsumption":comsumption}, status=status.HTTP_200_OK)
-    
-    
+    year=int(request.GET['year'])
+    month=int(request.GET['month'])
+    day=int(request.GET['day'])
+    input_date=str(date(year,month,day))
+    if User_Record.objects.filter(user=user, today_date=input_date).exists():
+        user_record=User_Record.objects.get(user=user, today_date=input_date)
+        records=Record.objects.filter(userrecord=user_record)
+        records_serializer = RecordSerializer(records, many=True).data
+        day_budget = user_record.day_budget
+        comsumption = user_record.comsumption
+        return Response({"records": records_serializer, "day_budget": day_budget,"comsumption":comsumption}, status=status.HTTP_200_OK)
+    else:
+        user_detail = User_Custom.objects.get(user=user)
+        today = datetime.today()
+        next_month = datetime(today.year, today.month, 1) + relativedelta(months=1)
+        this_month_last_day = next_month + relativedelta(seconds=-1)
+        day_budget=int(user_detail.month_budget//this_month_last_day.day)
+        return Response({"day_budget":day_budget}, status=status.HTTP_200_OK)
+
+
 @api_view(['POST', 'GET'])    
 def todaysettlement(request, user_id):
     user = get_object_or_404(User,id=user_id)
     user_detail = User_Custom.objects.get(user=user)
     # 수정
-    user_record=User_Record.objects.get(user=user, today_date="2023-03-22")
+    user_record=User_Record.objects.get(user=user, today_date="2023-05-17")
     differ=user_record.day_budget-user_record.comsumption
-    if request.method == 'POST':  # 하루 기부금 저장
+    if request.method == 'POST':  # 하루 저금액 저장
         today_donation = request.data["today_donation"]
         user_record.donation += int(today_donation)
         user_record.differ = differ
         for i in Record.objects.filter(userrecord=user_record):
             i.settlement = True
             i.save()
-        user_detail.donation_count += 1
-        user_detail.donation_temperature += 10
-        user_detail.total_donation += int(today_donation)
-        
+        user_detail.savings += int(today_donation)
         user_record.save()
         user_detail.save()
         return Response(status=status.HTTP_200_OK)
@@ -57,19 +67,19 @@ def todaysettlement(request, user_id):
         
         
 @api_view(['POST'])     
-def addrecord(request):  # 하나의 record 테이블 생성
-    # token = request.META.get('HTTP_AUTHORIZATION', False)
-    # if token:
-    #     token = str(token).split()[1].encode("utf-8")
-    #     knoxAuth = TokenAuthentication()
-    #     user, auth_token = knoxAuth.authenticate_credentials(token)
-    #     request.user = user
+def addrecord(request,user_id):  # 하나의 record 테이블 생성
+    #token = request.META.get('HTTP_AUTHORIZATION', False)
+    #if token:
+    #    token = str(token).split()[1].encode("utf-8")
+    #    knoxAuth = TokenAuthentication()
+    #    user, auth_token = knoxAuth.authenticate_credentials(token)
+    #    request.user = user
         
-    # user = get_object_or_404(User,user=user) 
+    #   user = get_object_or_404(User,user=user) 
     # 임의 유저 설정
-    user = get_object_or_404(User,id=2)
+    user = get_object_or_404(User,id=user_id)
     user_detail = User_Custom.objects.get(user=user)
-    today = datetime.today()
+    today = timezone.now()
     next_month = datetime(today.year, today.month, 1) + relativedelta(months=1)
     this_month_last_day = next_month + relativedelta(seconds=-1)
     day_budget=int(user_detail.month_budget//this_month_last_day.day)
@@ -97,19 +107,19 @@ def addrecord(request):  # 하나의 record 테이블 생성
 
 
 @api_view(['GET'])
-def month_accountbook(request):
-    # token = request.META.get('HTTP_AUTHORIZATION', False)
-    # if token:
-    #     token = str(token).split()[1].encode("utf-8")
-    #     knoxAuth = TokenAuthentication()
-    #     user, auth_token = knoxAuth.authenticate_credentials(token)
-    #     request.user = user
+def month_accountbook(request,user_id):
+    #token = request.META.get('HTTP_AUTHORIZATION', False)
+    #if token:
+    #    token = str(token).split()[1].encode("utf-8")
+    #    knoxAuth = TokenAuthentication()
+    #    user, auth_token = knoxAuth.authenticate_credentials(token)
+    #    request.user = user
         
     # 프론트랑 연결할 때는 request.GET으로 고치기
     year = int(request.GET['year'])
     month = int(request.GET['month'])
     # 임의 유저
-    user = get_object_or_404(User,id=2)
+    user = get_object_or_404(User,id=user_id)
     user_record = User_Record.objects.filter(user=user)
     
     for i in user_record:
@@ -158,9 +168,11 @@ def category_analysis(request,user_id):
         total_count += records.count()
         for j in records:
             if j.category in record_temp:
-                record_temp[j.category] += 1
+                record_temp[j.category][0] += 1
+                record_temp[j.category][1] += j.price 
             else:
-                record_temp[j.category] = 1
+                each_list=[1,j.price]
+                record_temp[j.category] = each_list
             
     return Response({"record_byCategory": record_temp, "total_count": total_count}, status=status.HTTP_200_OK)
     
