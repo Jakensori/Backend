@@ -43,7 +43,11 @@ def todaysettlement(request, user_id):
     user = get_object_or_404(User,id=user_id)
     user_detail = User_Custom.objects.get(user=user)
     # 수정
-    user_record=User_Record.objects.get(user=user, today_date="2023-05-17")
+    year=int(request.GET['year'])
+    month=int(request.GET['month'])
+    day=int(request.GET['day'])
+    input_date=str(date(year,month,day))
+    user_record=User_Record.objects.get(user=user, today_date=input_date)
     differ=user_record.day_budget-user_record.comsumption
     if request.method == 'POST':  # 하루 저금액 저장
         today_donation = request.data["today_donation"]
