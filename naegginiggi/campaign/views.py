@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from campaign.models import Campaign, Review, User_Campaign
+from campaign.models import Campaign,User_Campaign
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import json
 from rest_framework import status
 from datetime import datetime
-from .serializers import CampaignSerializer,ReviewSerializer
+from .serializers import CampaignSerializer
 from user.models import User
 from django.shortcuts import get_object_or_404
 from knox.auth import TokenAuthentication
@@ -73,27 +73,6 @@ def campaignOne(request,campaign_id):
     for i in user_campaign:
         users.append(i.user.username)
     return Response({"campaign_info":campaignserializer, "donator":users}, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def updateReview(request, campaign_id):
-    campaign=Campaign.objects.get(campaign_id=campaign_id)
-    title=request.data['title']
-    content=request.data['content']
-    Review.objects.create(
-        campaign=campaign,
-        title=title,
-        content=content
-    )
-    return Response(status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def loadReview(request,campaign_id):
-    campaign=Campaign.objects.get(campaign_id=campaign_id)
-    review=Review.objects.filter(campaign=campaign)
-    reviewserializer = ReviewSerializer(review).data    
-    return Response(reviewserializer, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

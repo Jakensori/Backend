@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async  # db 접근
 import json
 from user.models import User
-from campaign.models import Message, Campaign
+from campaign.models import Campaign
 from django.shortcuts import get_object_or_404
 
 
@@ -55,7 +55,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def create_message(self, message):
         user = get_object_or_404(User,id=1)
-        Message.objects.create(
-                user=user, campaign=get_object_or_404(Campaign, campaign_id=int(self.room_name)), message=message
-        )
+        #Message.objects.create(
+        #        user=user, campaign=get_object_or_404(Campaign, campaign_id=int(self.room_name)), message=message
+        #)
         return True

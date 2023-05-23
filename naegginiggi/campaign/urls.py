@@ -7,7 +7,5 @@ urlpatterns = [
     path('post/update/', views.updateCampaign),  
     path('posts/all/', views.loadCampaign),
     path('posts/<int:campaign_id>/', views.campaignOne),
-    path('post/review/<int:campaign_id>/', views.updateReview),
-    path('post/review/', views.loadReview),
     path('mydonation/all/', views.mydonations),
 ]
