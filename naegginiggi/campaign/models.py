@@ -19,6 +19,18 @@ class Campaign(models.Model):
         managed = True
         db_table = 'Campaign'
        
+class Notification(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, null=True)
+    createdAt = models.DateField()
+    title = models.CharField(max_length=200)
+    foundation = models.CharField(max_length=50)
+    content = models.TextField()
+    image = models.CharField(max_length=200)
+    
+    class Meta:
+        managed=True
+        db_table='Notification'
+
 
 class User_Campaign(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
