@@ -33,7 +33,6 @@ def define_user(request):
     user, auth_token = knoxAuth.authenticate_credentials(token)
     return user
 
-
 # WUJtQT09와 같은 형태로 랜덤 코드 생성 함수
 def generate_random_slug_code(length=15):  # length는 1-32사이에 존재해야 함.
     return base64.urlsafe_b64encode(       # url에서도 랜덤 코드를 사용가능하게 하기 위한 함수
