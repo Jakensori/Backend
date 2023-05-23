@@ -8,4 +8,5 @@ urlpatterns = [
     path('posts/all/', views.loadCampaign),
     path('posts/<int:campaign_id>/', views.campaignOne),
     path('mydonation/all/', views.mydonations),
+    path('user/notification/', views.usernotification),
 ]

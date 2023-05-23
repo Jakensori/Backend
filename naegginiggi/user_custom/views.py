@@ -28,13 +28,17 @@ def monthBudget(request):
     return Response({'data': user_custom.month_budget}, status=status.HTTP_200_OK)
 
 
-@api_view(['PATCH'])
+@api_view(['PATCH','GET'])
 def patch_budget(request):
     myuser=get_object_or_404(User,id=1)
-    user, budget_to_change= get_object_or_404(User_Custom, user=myuser), request.data['month_budget']
-    user.month_budget = budget_to_change
-    user.save()
-    return Response(status=status.HTTP_200_OK)
+    user = get_object_or_404(User_Custom, user=myuser)
+    if request.method == 'PATCH':
+        budget_to_change = request.data['month_budget']
+        user.month_budget = budget_to_change
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response({"month_budget":user.month_budget},status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def mealpoint(request,user_id):
@@ -80,6 +84,4 @@ def mypageUser(request):
     user_donationtem = User_Custom.objects.get(user=myuser).donation_temperature
     username = myuser.username
 
-    return Response({"username": username, "userid": user.username, "email": user.email, "donation_temperature": user_donationtem}, status=status.HTTP_200_OK)
-
-    
+    return Response({"username": username, "userid": user.username, "email": user.email, "donation_temperature": user_donationtem}, status=status.HTTP_200_OK)  

@@ -35,7 +35,7 @@ def todayrecord(request, user_id):
         next_month = datetime(today.year, today.month, 1) + relativedelta(months=1)
         this_month_last_day = next_month + relativedelta(seconds=-1)
         day_budget=int(user_detail.month_budget//this_month_last_day.day)
-        return Response({"day_budget":day_budget}, status=status.HTTP_200_OK)
+        return Response({"day_budget":day_budget,"comsumption":0}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST', 'GET'])    

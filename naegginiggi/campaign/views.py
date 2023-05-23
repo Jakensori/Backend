@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from campaign.models import Campaign,User_Campaign
+from campaign.models import Campaign,User_Campaign, Notification
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import json
 from rest_framework import status
 from datetime import datetime
-from .serializers import CampaignSerializer
+from .serializers import CampaignSerializer, NotificationSerializer
 from user.models import User
 from django.shortcuts import get_object_or_404
 from knox.auth import TokenAuthentication
@@ -61,6 +61,21 @@ def loadCampaign(request):
     campaign=Campaign.objects.all()
     campaignserializer = CampaignSerializer(campaign, many=True).data
     return Response(campaignserializer, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def usernotification(request):
+    # 임의 유저
+    user = get_object_or_404(User,id=1)
+    user_campaign=User_Campaign.objects.filter(user=user)
+    result_list=[]
+    for i in user_campaign:
+        campaign=i.campaign
+        campaign=Campaign.objects.get(campaign_id=campaign.campaign_id)
+        notification=Notification.objects.filter(campaign=campaign)
+        notiserializer = NotificationSerializer(notification, many=True).data
+        result_list.append(notiserializer)
+    return Response(result_list, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
