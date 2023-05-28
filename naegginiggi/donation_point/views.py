@@ -46,17 +46,12 @@ def fail(request):
 
 @api_view(['GET'])
 def payments_request(request):
-    payment_category = 0  # 0이면 카드, 1이면 가상계좌
-    url = 'https://api.tosspayments.com/v1/payments'
-    code = generate_random_slug_code()
-    data = {"method" : "카드",
-            "amount" : 3000,
-            "orderId" : code,
-            "orderName": "캠페인 3",
-            "failUrl": "http://52.78.205.224:8000/donation/fail/",                          "successUrl": "http://52.78.205.224:8000/donation/approve/","customerName": "testuser"}
-    headers = {'Authorization': 'Basic dGVzdF9za19scFAyWXhKNEs4N3hZWUFBS1IwM1JHWndYTE9iOg==', "Content-Type": "application/json"}
-    res = requests.post(url, json=data, headers=headers)
-    return Response(res)
+    code=generate_random_slug_code()
+    return render(request, 'requestPayment.html',
+                  {'payment_category':1, 'pay_by':request.GET.get('pay_by'),
+                    'amount':request.GET.get('amount'),'orderName':request.GET.get('order_name'),
+                    'orderId':code, 'customerName':request.GET.get('customer_name')})
+
 
 @api_view(['GET'])
 def payments_approve(request):

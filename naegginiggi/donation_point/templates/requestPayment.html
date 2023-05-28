@@ -1,0 +1,65 @@
+<head>
+    <meta charset="utf-8" />
+    <title>결제하기</title>
+    <!-- 토스페이먼츠 결제창 SDK 추가 -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+  </head>
+  <body>
+    <section>
+        <button id="payment-button">결제하기</button>
+    </section>
+    <script>
+      // ------ 클라이언트 키로 객체 초기화 ------
+      var clientKey = 'test_ck_jkYG57Eba3GqKKZbqX5rpWDOxmA1'
+      var tossPayments = TossPayments(clientKey)
+      var button = document.getElementById('payment-button')
+      var payment = {{payment_category}}
+      var pay_by = {{pay_by}}
+      var amount = {{amount}}
+      var orderId = {{orderId}}
+      var orderName = {{orderName}}
+      var customerName = {{customerName}}
+      button.addEventListener('click',function (){
+        // ------ 결제창 띄우기 ------
+        if (payment == 0) {
+            tossPayments.requestPayment(pay_by, { // 결제수단 파라미터 (카드, 계좌이체, 가상계좌, 휴대폰 등)
+                // 결제 정보 파라미터
+                // 더 많은 결제 정보 파라미터는 결제창 Javascript SDK에서 확인하세요.
+                //https://docs.tosspayments.com/reference/js-sdk
+                amount: amount, // 결제 금액
+                orderId: orderId,  // 주문 ID(주문 ID는 상점에서 직접 만들어주세요.)
+                orderName:orderName,  // 주문명
+                customerName:customerName,  // 구매자 이름
+                successUrl: 'http://52.78.205.224:8000/donation/approve/', // 결제 성공 시 이동할 페이지(이 주소는 예시입니다. 상점에서 직접 만들어주세요.)
+                failUrl: 'http://127.0.0.1:8000/donation/fail/', // 결제 실패 시 이동할 페이지(이 주소는 예시입니다. 상점에서 직접 만들어주세요.)
+              })
+        }
+        else {
+            tossPayments.requestPayment('가상계좌', { // 결제수단 파라미터
+                // 결제 정보 파라미터
+                amount: 15000,
+                orderId: 'gavDc-1zWzWLHupxjXaLI',
+                orderName: '토스 티셔츠 외 2건',
+                customerName: '박토스',
+                successUrl: 'http://52.78.205.224:8000/donation/',
+                failUrl: 'http://52.78.205.224:8000/donation/fail/',
+                validHours: 24,
+                cashReceipt: {
+                  type: '소득공제',
+                },
+              })
+        }
+      })
+      // ------결제창을 띄울 수 없는 에러 처리 ------
+      // 메서드 실행에 실패해서 reject 된 에러를 처리하는 블록입니다.
+      // 결제창에서 발생할 수 있는 에러를 확인하세요. 
+      // https://docs.tosspayments.com/reference/error-codes#결제창공통-sdk-에러
+      {% comment %} .catch(function (error) {
+        if (error.code === 'USER_CANCEL') {
+          // 결제 고객이 결제창을 닫았을 때 에러 처리
+        } else if (error.code === 'INVALID_CARD_COMPANY') {
+          // 유효하지 않은 카드 코드에 대한 에러 처리
+        }
+      }); {% endcomment %}
+    </script>
+  </body>
