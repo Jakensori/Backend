@@ -48,7 +48,7 @@ def fail(request):
 def payments_request(request):
     code=generate_random_slug_code()
     return render(request, 'requestPayment.html',
-                  {'payment_category':1, 'pay_by':request.GET.get('pay_by'),
+                  {'payment_category':0, 'pay_by':request.GET.get('pay_by'),
                     'amount':request.GET.get('amount'),'orderName':request.GET.get('order_name'),
                     'orderId':code, 'customerName':request.GET.get('customer_name')})
 
