@@ -13,21 +13,21 @@
       var clientKey = 'test_ck_jkYG57Eba3GqKKZbqX5rpWDOxmA1'
       var tossPayments = TossPayments(clientKey)
       var button = document.getElementById('payment-button')
-      var payment = {{payment_category}}
-      var pay_by = {{pay_by}}
-      var amount = {{amount}}
-      var orderId = {{orderId}}
-      var orderName = {{orderName}}
-      var customerName = {{customerName}}
+      let payment = 0
+      var pay_by = "{{pay_by}}";
+      let amount = {{amount}}
+      let orderId = "{{orderId}}"
+      let orderName = "{{orderName}}"
+      let customerName = "{{customerName}}"
       button.addEventListener('click',function (){
         // ------ 결제창 띄우기 ------
         if (payment == 0) {
-            tossPayments.requestPayment(pay_by, { // 결제수단 파라미터 (카드, 계좌이체, 가상계좌, 휴대폰 등)
+	tossPayments.requestPayment(pay_by, { // 결제수단 파라미터 (카드, 계좌이체, 가상계좌, 휴대폰 등)
                 // 결제 정보 파라미터
                 // 더 많은 결제 정보 파라미터는 결제창 Javascript SDK에서 확인하세요.
                 //https://docs.tosspayments.com/reference/js-sdk
                 amount: amount, // 결제 금액
-                orderId: orderId,  // 주문 ID(주문 ID는 상점에서 직접 만들어주세요.)
+		orderId:orderId,  // 주문 ID(주문 ID는 상점에서 직접 만들어주세요.)
                 orderName:orderName,  // 주문명
                 customerName:customerName,  // 구매자 이름
                 successUrl: 'http://52.78.205.224:8000/donation/approve/', // 결제 성공 시 이동할 페이지(이 주소는 예시입니다. 상점에서 직접 만들어주세요.)
