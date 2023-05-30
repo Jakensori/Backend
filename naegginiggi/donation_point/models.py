@@ -6,7 +6,7 @@ class Donation_Point(models.Model):
     donatitonpoint_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     paymentkey= models.CharField(max_length=200)
-    approvedAt = models.DateTimeField()
+    approvedAt = models.DateTimeField(auto_now_add=True)
     method=models.CharField(max_length=50)
     amount=models.IntegerField()
     orderId = models.CharField(max_length=100)
