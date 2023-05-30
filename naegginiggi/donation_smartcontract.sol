@@ -31,10 +31,17 @@ contract NaeggiDonation {
         emit Finished();
         payable (address(msg.sender)).transfer(address(this).balance);
     }
-    
+
+    // 현재 누적 기부 금액 보는 함수    
     function check() public view returns (uint256){
         return address(this).balance;
     }
+
+    // 목표 기부 금액 보는 함수 
+    function goal() public view returns (uint256){
+	return donationAmount;
+    }
+
 
     function donate()
         public
