@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('change/<int:krw>/',views.ether_change),
     path('fail/',views.fail),
     path('request/', views.payments_request),
     path('approve/', views.payments_approve),

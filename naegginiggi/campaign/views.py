@@ -69,11 +69,15 @@ def usernotification(request):
     user = get_object_or_404(User,id=1)
     user_campaign=User_Campaign.objects.filter(user=user)
     result_list=[]
-    for i in user_campaign:
-        campaign=i.campaign
+    campaign=Campaign.objects.get(campaign_id=user_campaign[0].campaign.campaign_id)
+    notifications=Notification.objects.filter(campaign=campaign)
+    for i in range(1,len(user_campaign)):
+        campaign=user_campaign[i].campaign
         campaign=Campaign.objects.get(campaign_id=campaign.campaign_id)
-        notification=Notification.objects.filter(campaign=campaign)
-        notiserializer = NotificationSerializer(notification, many=True).data
+        notifications=notifications.union(Notification.objects.filter(campaign=campaign))
+    notifications=notifications.order_by('createdAt')
+    for notification in notifications:
+        notiserializer = NotificationSerializer(notification).data
         result_list.append(notiserializer)
     return Response(result_list, status=status.HTTP_200_OK)
 

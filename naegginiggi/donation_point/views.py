@@ -10,6 +10,7 @@ from knox.auth import TokenAuthentication
 import my_settings
 
 from user.models import User
+from django.contrib.auth.models import User as uu
 from user_custom.models import User_Custom
 from campaign.models import User_Campaign, Campaign
 
@@ -68,7 +69,7 @@ def payments_approve(request):
     user=get_object_or_404(User,id=1)
     campaign=Campaign.objects.get(campaign_id=3)
     if User_Campaign.objects.filter(user=user, campaign=campaign).exists():
-        usercampaign=User_Campaign.objects.filter(user=user, campaign=campaign)
+        usercampaign=User_Campaign.objects.get(user=user, campaign=campaign)
     else:
         usercampaign=User_Campaign.objects.create(
                 user=user,
@@ -83,13 +84,12 @@ def payments_approve(request):
     Donation_Point.objects.create(
         user=user,
         paymentkey=res["paymentKey"],
-        approvedAt=res["approvedAt"],
         method=res["method"],
         amount=res["totalAmount"],
         orderId=res["orderId"]
     )
-    accumulatePointByUserId(request,user,user_detail)
-    return Response(res, status=status.HTTP_200_OK)
+    point_res = accumulatePointByUserId(request,user,user_detail)
+    return render(request,'success.html',{'amount':res["totalAmount"]})
 
 
 @api_view(['GET'])
@@ -140,6 +140,7 @@ def accumulatePointByUserId(request,user,user_custom):
     loyalty_program_id, token_headers = get_authentication()
     earn_point_url = "https://api.luniverse.io/svc/v2/mercury/point/save"
     description = str(timezone.now()) + " " +str(user.username) + " "+  "20 포인트 충전"
+    user = get_object_or_404(uu, id=user.user_id)
     payload = {
         "orderIdentifier": generate_random_slug_code(),
         "userIdentifier": str(user.password),
@@ -169,7 +170,7 @@ def redeemPointByUserId(request):
         "description": str(timezone.now()) + " " + str(myuser.username)+" "+str(using_point) + " 포인트 차감"
     }
     response = requests.post(url, json=payload, headers=token_headers)
-    return Response(response.json(), status=status.HTTP_200_OK)
+    return Response({"mealpoint_now":user_custom.donation_temperature}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -189,3 +190,8 @@ def donation_receipt(request):
     donation_user = Donation_Point.objects.filter(user=user)
     donation_list = DonationPointSerializer(donation_user, many=True).data
     return Response(donation_list, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def ether_change(request,krw):
+    ether=0.0000004*krw
+    return Response({"ether":ether}, status=status.HTTP_200_OK)
