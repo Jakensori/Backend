@@ -88,6 +88,9 @@ def payments_approve(request):
         amount=res["totalAmount"],
         orderId=res["orderId"]
     )
+    user_detail.savings=0;
+    user_detail.save()
+    usercampaign.save()
     point_res = accumulatePointByUserId(request,user,user_detail)
     return render(request,'success.html',{'amount':res["totalAmount"]})
 
@@ -161,7 +164,7 @@ def redeemPointByUserId(request):
     using_point = request.data['used_point']
     user_custom = get_object_or_404(User_Custom, user=myuser)
     user_custom.donation_temperature -= using_point
-
+    user_custom.save()
     payload = {
         "orderIdentifier": generate_random_slug_code(),
         "userIdentifier": str(user.password),
