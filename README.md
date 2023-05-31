@@ -85,7 +85,7 @@ We support simple payment through Toss Payments service. After a user selects th
 
 - **Recording Meals**
 
-Check a meal time, method and write price, and note. Then press the save button. After using the daily food expenses, press the "one-day settlement" button at the bottom of the middle to save the donation amount. Donations are possible as much as the difference between the daily food budget and expenditure and the donations will be accumulated in the donation box.
+Press “+” button and check a meal time, method and write price, and note. Then press the save button. After using the daily food expenses, Click "one-day settlement" button above the “+” button to save the donation amount. Donations are possible as much as the difference between the daily food budget and expenditure. The donations will be accumulated in the donation box.
 
 - **Tracking Consumption**
 
