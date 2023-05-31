@@ -111,7 +111,7 @@ If you click the *Letter* icon in the upper right corner of app bar, you can see
 |Database|![MySQL](https://img.shields.io/badge/MySQL-4479A1.svg?style=for-the-badge&logo=MySQL&logoColor=white)  ![RDS](https://img.shields.io/badge/Amazon_RDS-527FFF.svg?style=for-the-badge&logo=AmazonRDS&logoColor=white) |
 |Programming Language|![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white) ![Solidity](https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=Solidity&logoColor=white) ![html](https://img.shields.io/badge/html-E34F26?style=for-the-badge&logo=html5&logoColor=white) |
 |Environment|![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) ![Visual_Studio_Code](https://img.shields.io/badge/Visual_Studio_Code-007ACC?style=for-the-badge&logo=Visual_Studio_Code&logoColor=white) ![Remix](https://img.shields.io/badge/Remix-000000?style=for-the-badge&logo=Remix&logoColor=white) |
-|Communication|![Google Meet](https://img.shields.io/badge/Google_Meet-00897B?style=for-the-badge&logo=Google_Meet&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white) ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white)|
+|Communication|![Google Meet](https://img.shields.io/badge/Google_Meet-00897B?style=for-the-badge&logo=Google_Meet&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white) ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white) ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white)|
 <br />
 
 > **Frontend**
@@ -121,7 +121,7 @@ If you click the *Letter* icon in the upper right corner of app bar, you can see
 |Framework|![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white)|
 |Programming Language|![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white)|
 |Environment|![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) ![Visual_Studio_Code](https://img.shields.io/badge/Visual_Studio_Code-007ACC?style=for-the-badge&logo=Visual_Studio_Code&logoColor=white) ![Android_Studio](https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=Android_Studio&logoColor=white) |
-|Communication|![Google Meet](https://img.shields.io/badge/Google_Meet-00897B?style=for-the-badge&logo=Google_Meet&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white) ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white)|
+|Communication|![Google Meet](https://img.shields.io/badge/Google_Meet-00897B?style=for-the-badge&logo=Google_Meet&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white) ![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white)![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white)|
 ## 🔍 Action Guide
 
 ### Requirements
