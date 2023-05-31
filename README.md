@@ -11,7 +11,7 @@ A project that means taking care of my meals and taking care of other people's m
 
 1. It solves **health and well-being problems** by encouraging **regular eating habit** by analyzing and showing users' meal records.
 2. It helps **planned consumption** by encouraging consumption that fits user's own food budget.
-3. It contributes to **solving the hunger problem** by allowing users to **donate** underprivileged children **as part of their budget savings.**
+3. It contributes to **solving the hunger problem** by allowing users to **donate their budget savings** to underprivileged children.
 
 
 ## 🕰 Develop Period
