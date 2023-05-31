@@ -37,7 +37,7 @@ A project that means taking care of my meals and taking care of other people's m
 ## 👩‍💻 Members
 
 - Gahyun Lee (Backend, Server) [@gahyun02](https://github.com/gahyun02)
-- Jiwoo Yang (Frontend) [@yang-jiu](https://github.com/yang-jiu)
+- Jiu Yang (Frontend) [@yang-jiu](https://github.com/yang-jiu)
 - Jungmin Lee (Frontend) [@lmin402](https://github.com/lmin402)
 - Eunjung Kwon (Frontend) [@enjung](https://github.com/enjung)
 
