@@ -7,6 +7,8 @@
 
 A project that means taking care of my meals and taking care of other people's meals with the food expenses users saved. Project name is derived from 'pass the hat' that means to ask a number of people to give money for something.
 
+📱 Youtube Link ➡️ https://www.youtube.com/watch?v=0UTi7BZtnCI
+
 **GOALS**
 
 1. It solves **health and well-being problems** by encouraging **regular eating habit** by analyzing and showing users' meal records.
