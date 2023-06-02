@@ -48,9 +48,13 @@ A project that means taking care of my meals and taking care of other people's m
 
 Enter information such as ID and password and press the 'Sign up' and 'Sign in' buttons at the bottom to access the main page.
 
+![onboarding](https://github.com/Jakensori/Backend/blob/main/screens/onboarding.png?raw=true)
+
 ⭐️ **Record Meal**
 
 It is a page that manages daily food expenses, and you can record your meal.
+
+![recording_meal](https://github.com/Jakensori/Backend/blob/main/screens/recording_meal.png?raw=true)
 
 ⭐️ **Chart**
 
@@ -59,19 +63,26 @@ This page is composed of household account book and food cost analysis.
 1. *Household account book* : When the daily settlement is completed, it shows how much food expenses have been saved, handed over, and put in the donation box. The following shows the amount of consumption and savings compared to the monthly budget.
 2. *Food Cost Analysis* : Shows the type of meal corresponding to the selection year and month compared to last month's statistics according to the number and cost.
 
+![tracking](https://github.com/Jakensori/Backend/blob/main/screens/tracking.png?raw=true)
+
 ⭐️ **Donation**
 
 This is a page where you can donate the amount you saved through ‘Settle for a day’. You can see ongoing campaigns you can donate to and the campaigns you have donated to. 
 In order to increase accessibility to the campaigns currently in progress, we have placed about 4 campaigns at the bottom so that you can preview them.
 
+![donation](https://github.com/Jakensori/Backend/blob/main/screens/donation.png?raw=true)
+
 ⭐️ **Collection**
 
 You can see the amount of MEAL points users have earned through donation payment and the level proportional to the number of donations. When enough MEAL points are accumulated, you can unlock various characters. Complete your own collection!
+
+![collection](https://github.com/Jakensori/Backend/blob/main/screens/collection.png?raw=true)
 
 ⭐️ **My page**
 
 You can check your basic information, modify your monthly food budget, and view your donation details in the form of a receipt.
 
+![mypage](https://github.com/Jakensori/Backend/blob/main/screens/mypage.png?raw=true)
 
 ## 📌 Services
 
