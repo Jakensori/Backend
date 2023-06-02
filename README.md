@@ -5,7 +5,7 @@
 
 ## 💻 Project Introduction
 
-A project that means taking care of my meals and taking care of other people's meals with the food expenses users saved. Project name is derived from 'pass the hat' that means collecting money. 
+A project that means taking care of my meals and taking care of other people's meals with the food expenses users saved. Project name is derived from 'pass the hat' that means to ask a number of people to give money for something.
 
 **GOALS**
 
