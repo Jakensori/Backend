@@ -141,6 +141,10 @@ cd Backend/naegginiggi
 python3 manage.py runserver
 ```
 
+> **Frontend**
+> 
+- Flutter 3.10.2
+- Dart 3.0.2
 
 ## 🔗 Architecture
 
