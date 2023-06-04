@@ -25,9 +25,9 @@ A project that means taking care of my meals and taking care of other people's m
 
 - Backend
 
-[http://34.64.250.212:8000](http://34.64.250.212:8000/) (GCP) `server for demo`
+[http://34.64.250.212:8000](http://34.64.250.212:8000/) (GCP) `server for develop`
 
-[http://52.78.205.224:8000](http://52.78.205.224:8000/) (AWS) `http`
+[http://52.78.205.224:8000](http://52.78.205.224:8000/) (AWS) `server for demo` `http`
 
 [https://pass-meal.site](https://pass-meal.site/) (AWS) `https`
 
