@@ -21,17 +21,6 @@ A project that means taking care of my meals and taking care of other people's m
 - 2023.01 ~ 2023.06
 
 
-## 💡 Deployed Address
-
-- Backend
-
-[https://pass-meal.site](https://pass-meal.site/) (AWS) `https`
-
-- Smart Contract
-
-0xB6Ebd7f29D5BbF9C3Dc6245450dAd49fEba2C25b
-
-
 ## 👩‍💻 Members
 
 - Gahyun Lee (Backend, Server) [@gahyun02](https://github.com/gahyun02)
