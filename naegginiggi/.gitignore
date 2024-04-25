@@ -6,7 +6,7 @@ my_settings.py
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
+Backend/naegginiggi/db.sqlite3
 db.sqlite3-journal
 media
 .json

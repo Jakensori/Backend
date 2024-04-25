@@ -5,7 +5,7 @@ import json
 import os
 
 ###### 사용자가 기부 모금함 리스트 업데이트 버튼 누를 시,
-###### result.json 파일 초기화하고 search_apitest.py 파일 실행 !!
+###### result.json 파일 초기화하고 search_apitest.py 파일 실행 !! (아직 json 파일 초기화 로직 구현은 x)
 
 ## python파일의 위치
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

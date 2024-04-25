@@ -14,6 +14,7 @@ from django.utils import timezone
 from dateutil.relativedelta import *
 
 # Create your views here.
+# 오늘의 식사 기록 불러오기
 @api_view(['GET'])
 def todayrecord(request, user_id): 
     user = get_object_or_404(User,id=user_id) 
@@ -22,41 +23,42 @@ def todayrecord(request, user_id):
     month=int(request.GET['month'])
     day=int(request.GET['day'])
     input_date=str(date(year,month,day))
-    if User_Record.objects.filter(user=user, today_date=input_date).exists():
+    if User_Record.objects.filter(user=user, today_date=input_date).exists(): # 식사 기록이 하나 이상 존재할 때
         user_record=User_Record.objects.get(user=user, today_date=input_date)
         records=Record.objects.filter(userrecord=user_record)
         records_serializer = RecordSerializer(records, many=True).data
         day_budget = user_record.day_budget
         comsumption = user_record.comsumption
         return Response({"records": records_serializer, "day_budget": day_budget,"comsumption":comsumption}, status=status.HTTP_200_OK)
-    else:
+    else: # 당일에 식사 기록이 없을 때
         user_detail = User_Custom.objects.get(user=user)
         today = datetime.today()
         next_month = datetime(today.year, today.month, 1) + relativedelta(months=1)
         this_month_last_day = next_month + relativedelta(seconds=-1)
-        day_budget=int(user_detail.month_budget//this_month_last_day.day)
+        day_budget=int(user_detail.month_budget//this_month_last_day.day) # 하루 식비 예산 계산
         return Response({"day_budget":day_budget,"comsumption":0}, status=status.HTTP_200_OK)
 
 
+# 식사 기록 끝난 후, 하루 식비 정산하기
 @api_view(['POST', 'GET'])    
 def todaysettlement(request, user_id):
     user = get_object_or_404(User,id=user_id)
     user_detail = User_Custom.objects.get(user=user)
-    # 수정
+
     year=int(request.GET['year'])
     month=int(request.GET['month'])
     day=int(request.GET['day'])
     input_date=str(date(year,month,day))
     user_record=User_Record.objects.get(user=user, today_date=input_date)
-    differ=user_record.day_budget-user_record.comsumption
+    differ=user_record.day_budget-user_record.comsumption # 하루 예산 - 당일 소비 금액
     if request.method == 'POST':  # 하루 저금액 저장
-        today_donation = request.data["today_donation"]
+        today_donation = request.data["today_donation"] # 저금 가능 금액 중 기부할 금액 입력
         user_record.donation += int(today_donation)
         user_record.differ = differ
         for i in Record.objects.filter(userrecord=user_record):
             i.settlement = True
             i.save()
-        user_detail.savings += int(today_donation)
+        user_detail.savings += int(today_donation) # 기부 저금통에 당일 기부 금액 저장
         user_record.save()
         user_detail.save()
         return Response(status=status.HTTP_200_OK)
@@ -69,7 +71,8 @@ def todaysettlement(request, user_id):
             donation=0
         return Response({"count":record.count(), "donation_possible": donation}, status=status.HTTP_200_OK)
         
-        
+
+ # 식사 기록 생성하기       
 @api_view(['POST'])     
 def addrecord(request,user_id):  # 하나의 record 테이블 생성
     #token = request.META.get('HTTP_AUTHORIZATION', False)
@@ -88,7 +91,7 @@ def addrecord(request,user_id):  # 하나의 record 테이블 생성
     this_month_last_day = next_month + relativedelta(seconds=-1)
     day_budget=int(user_detail.month_budget//this_month_last_day.day)
     
-    if User_Record.objects.filter(user=user, today_date=today.date()).exists():
+    if User_Record.objects.filter(user=user, today_date=today.date()).exists(): # 당일에 식사 기록이 하나 이상 존재할 때
         user_record=User_Record.objects.get(user=user, today_date=today.date())
     else:
         user_record=User_Record.objects.create(
@@ -110,6 +113,7 @@ def addrecord(request,user_id):  # 하나의 record 테이블 생성
     return Response({'add_record': record.when}, status=status.HTTP_200_OK)
 
 
+# 한 달 가계부 한꺼번에 불러오기
 @api_view(['GET'])
 def month_accountbook(request,user_id):
     #token = request.META.get('HTTP_AUTHORIZATION', False)
@@ -133,8 +137,8 @@ def month_accountbook(request,user_id):
             user_record= user_record.exclude(userrecord_id=i.userrecord_id)
             
     month_budget = User_Custom.objects.get(user=user).month_budget  # 한 달 예산
-    all_comsumption = 0
-    all_donation = 0
+    all_comsumption = 0 # 값 초기화
+    all_donation = 0 # 값 초기화
     userrecord_serializer = AccountBookSerializer(user_record, many=True).data
     
     for i in user_record:
@@ -162,13 +166,14 @@ def analysis(request, user_id):
     return userrecord_temp 
 
 
+# 식사 카테고리 분석 불러오기 (예: 외식, 배달, 등등)
 @api_view(['GET'])     
 def category_analysis(request,user_id):
     userrecord_temp=analysis(request,user_id)
     record_temp = {}
     total_count=0
     for i in userrecord_temp:
-        records = Record.objects.filter(userrecord=i, settlement=True)
+        records = Record.objects.filter(userrecord=i, settlement=True) # 정산 완료한 식사 기록만 불러오기
         total_count += records.count()
         for j in records:
             if j.category in record_temp:
@@ -179,7 +184,9 @@ def category_analysis(request,user_id):
                 record_temp[j.category] = each_list
             
     return Response({"record_byCategory": record_temp, "total_count": total_count}, status=status.HTTP_200_OK)
-    
+
+
+# 식사 시간 분석 불러오기 (예: 아침, 점심, 간식, 야식, 등등)
 @api_view(['GET'])  
 def time_analysis(request,user_id):        
     userrecord_temp=analysis(request,user_id)

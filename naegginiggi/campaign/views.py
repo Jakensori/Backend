@@ -32,7 +32,7 @@ def room(request, room_name):
         'room_name': room_name
     })
     
-    
+# 크롤링 데이터 인덱싱해서 DB에 저장하기
 @api_view(['POST'])
 def updateCampaign(request):
     with open('naegginiggi/result.json','r') as file:
@@ -56,6 +56,7 @@ def updateCampaign(request):
     return Response(status=status.HTTP_200_OK)
 
 
+# 기부 캠페인 전체 불러오기
 @api_view(['GET'])
 def loadCampaign(request):
     campaign=Campaign.objects.all()
@@ -63,6 +64,7 @@ def loadCampaign(request):
     return Response(campaignserializer, status=status.HTTP_200_OK)
 
 
+# 기부한 캠페인으로부터 온 소식 불러오기
 @api_view(['GET'])
 def usernotification(request):
     # 임의 유저
@@ -82,6 +84,7 @@ def usernotification(request):
     return Response(result_list, status=status.HTTP_200_OK)
 
 
+# 캠페인 하나 불러오기
 @api_view(['GET'])
 def campaignOne(request,campaign_id):
     campaign=Campaign.objects.get(campaign_id=campaign_id)
@@ -94,6 +97,7 @@ def campaignOne(request,campaign_id):
     return Response({"campaign_info":campaignserializer, "donator":users}, status=status.HTTP_200_OK)
 
 
+# 내가 기부했던 캠페인들 불러오기
 @api_view(['GET'])
 def mydonations(request):
     #token = request.META.get('HTTP_AUTHORIZATION', False)

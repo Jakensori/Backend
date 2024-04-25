@@ -10,6 +10,8 @@ from rest_framework import status
 from . import models
 from user.models import User
 # Create your views here.
+
+# 유저 로그인하기
 @api_view(['POST'])
 def login_api(request):
     serializer = AuthTokenSerializer(data=request.data)
@@ -27,6 +29,8 @@ def login_api(request):
         'token': token
     })
 
+
+# 유저 탈퇴
 @api_view(['GET','DELETE'])
 def get_delete_user_data(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
@@ -53,6 +57,7 @@ def get_delete_user_data(request):
         return Response({'error': 'not authenticated'}, status=400)
     
 
+# 유저 회원가입 하기
 @api_view(['POST'])
 def register_api(request):
     # auth의 User 저장
@@ -85,6 +90,7 @@ def duplicationcheck(request):
     return Response(True, status=status.HTTP_200_OK)
 
 
+# 유저 닉네임 변경
 @api_view(['PATCH'])
 def patch_username(request):
     user, username_to_change= get_object_or_404(models.User, user=request.user), request.data['username']

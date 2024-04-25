@@ -23,7 +23,7 @@ class Record(models.Model):
     category = models.CharField(max_length=30)
     price = models.IntegerField()
     memo = models.TextField(null=True)
-    settlement = models.BooleanField(default=False)
+    settlement = models.BooleanField(default=False) # 하루 정산 여부
     
     class Meta:
         managed = True

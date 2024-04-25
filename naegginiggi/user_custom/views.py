@@ -9,7 +9,10 @@ from campaign.models import Campaign
 from campaign.serializers import CampaignSerializer
 
 from django.core.paginator import Paginator
+
+
 # Create your views here.
+# 한 달 예산 저장
 @api_view(['POST'])
 def monthBudget(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
@@ -28,6 +31,7 @@ def monthBudget(request):
     return Response({'data': user_custom.month_budget}, status=status.HTTP_200_OK)
 
 
+# 한 달 예산 수정
 @api_view(['PATCH','GET'])
 def patch_budget(request):
     myuser=get_object_or_404(User,id=1)
@@ -40,6 +44,7 @@ def patch_budget(request):
     else:
         return Response({"month_budget":user.month_budget},status=status.HTTP_200_OK)
 
+# collection 페이지에서 mealpoint 불러오기
 @api_view(['GET'])
 def mealpoint(request,user_id):
     user = get_object_or_404(User,id=user_id)
@@ -47,6 +52,7 @@ def mealpoint(request,user_id):
     return Response({"meal_point":user_detail.donation_temperature, "level":user_detail.donation_count}, status=status.HTTP_200_OK)
 
 
+# 기부 저금통 누적 금액 불러오기
 @api_view(['GET'])
 def savings_amount(request):
     user= get_object_or_404(User, id=1)
@@ -54,6 +60,7 @@ def savings_amount(request):
     return Response({"savings":user_detail.savings}, status=status.HTTP_200_OK)
 
 
+# 기부 가능한 캠페인 4개 불러오기
 @api_view(['GET'])
 def donation_box(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
@@ -71,6 +78,7 @@ def donation_box(request):
     return Response({"total_donation":user_detail.total_donation, "donation_point":user_detail.donation_count, 'page_obj':campaignserializer}, status=status.HTTP_200_OK)
 
 
+# 마이페이지 유저 정보 불러오기
 @api_view(['GET'])
 def mypageUser(request):
     token = request.META.get('HTTP_AUTHORIZATION', False)
